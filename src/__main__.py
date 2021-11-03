@@ -7,9 +7,9 @@ load_dotenv()
 
 
 def main() -> None:
-    bot = Bot(command_prefix="!")
+    bot = Bot(command_prefix="!", help_command=None)  # type: ignore
     bot.load_extensions([
-        "src.exts.ping",
+        "src.exts.threads",
     ])
 
     bot.run(env["TOKEN"])
