@@ -14,16 +14,25 @@ class Threads(Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
+        self.handled = set()
+
     @property
     def old(self) -> datetime:
         return datetime.utcnow() - timedelta(seconds=20)
 
     @Cog.listener()
     async def on_thread_update(self, before: Thread, after: Thread) -> None:
+        if before.archived and not after.archived:
+            self.handled.remove(before.id)
+            return
+
+        if before.id in self.handled:
+            return
+
         if after.archived and not before.archived:
             old = self.old
 
-            await sleep(5)
+            await sleep(10)
 
             logs = await before.guild.audit_logs(limit=25, action=AuditLogAction.thread_update).flatten()
 
